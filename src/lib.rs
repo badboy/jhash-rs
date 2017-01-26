@@ -105,7 +105,7 @@ fn __jhash_mix(oa: &mut u32, ob: &mut u32, oc: &mut u32) {
 pub fn jhash(key: &[u8], initval: u32) -> u32 {
     let length = key.len();
 
-    let mut a = JHASH_INITVAL + length as u32 + initval;
+    let mut a = JHASH_INITVAL.wrapping_add(length as u32).wrapping_add(initval);
     let mut b = a;
     let mut c = a;
 
@@ -159,6 +159,12 @@ mod tests {
     #[test]
     fn same() {
         assert_eq!(jhash(b"foobar", 0), native_jhash(b"foobar", 0));
+    }
+
+    #[cfg(all(test, feature = "std"))]
+    #[test]
+    fn same_high_initval() {
+        assert_eq!(jhash(b"foob", 2411127588), native_jhash(b"foob", 2411127588));
     }
 }
 
