@@ -17,6 +17,9 @@ script:
       travis-cargo build &&
       travis-cargo test &&
       travis-cargo --only stable doc
+  - |
+      travis-cargo build -- --no-default-features &&
+      travis-cargo test -- --no-default-features
   - cargo test --release
 
 env:

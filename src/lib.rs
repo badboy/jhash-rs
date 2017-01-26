@@ -17,23 +17,27 @@
 //! assert_eq!(0xaeb72b0c, jhash::jhash(b"foobar", 0));
 //! ```
 
-#[cfg(test)]
+#![cfg_attr(not(feature = "std"), no_std)]
+#[cfg(all(test, feature = "std"))]
 #[macro_use]
 extern crate quickcheck;
 
-#[cfg(test)]
+#[cfg(feature = "std")]
+extern crate core;
+
+#[cfg(all(test, feature = "std"))]
 use std::os::raw::c_void;
-use std::ptr::copy_nonoverlapping;
+use core::ptr::copy_nonoverlapping;
 
 const JHASH_INITVAL : u32 = 0xdeadbeef;
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 extern {
     #[link_name = "jhash"]
     fn __jhash(key: *const c_void, length: u32, initval: u32) -> u32;
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 pub fn native_jhash(key: &[u8], initval: u32) -> u32 {
     unsafe {
         let length = key.len() as u32;
@@ -151,13 +155,14 @@ mod tests {
         assert_eq!(0xaeb72b0c, jhash(b"foobar", 0));
     }
 
+    #[cfg(all(test, feature = "std"))]
     #[test]
     fn same() {
         assert_eq!(jhash(b"foobar", 0), native_jhash(b"foobar", 0));
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod quickcheck_test {
     use super::*;
 
