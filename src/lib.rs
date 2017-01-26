@@ -21,6 +21,8 @@
 #[cfg(all(test, feature = "std"))]
 #[macro_use]
 extern crate quickcheck;
+#[cfg(all(feature = "std", feature = "hasher"))]
+extern crate rand;
 
 #[cfg(feature = "std")]
 extern crate core;
@@ -28,6 +30,9 @@ extern crate core;
 #[cfg(all(test, feature = "std"))]
 use std::os::raw::c_void;
 use core::ptr::copy_nonoverlapping;
+
+#[cfg(all(feature = "std", feature = "hasher"))]
+pub mod hasher;
 
 const JHASH_INITVAL : u32 = 0xdeadbeef;
 
