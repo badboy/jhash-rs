@@ -1,3 +1,22 @@
+//! # Jenkins hash
+//!
+//! A small & fast hash suitable for some hash maps.
+//! Uses in the Linux kernel.
+//!
+//! It is not a cryptographic hash and thus should not be used in situations where DOS resistency
+//! is required.
+//!
+//! Original: <http://burtleburtle.net/bob/hash/>
+//!
+//! Implementation in the Linux kernel:
+//! <https://github.com/torvalds/linux/blob/49e555a932de57611eb27edf2d1ad03d9a267bdd/include/linux/jhash.h>
+//!
+//! ## Usage:
+//!
+//! ```rust
+//! assert_eq!(0xaeb72b0c, jhash::jhash(b"foobar", 0));
+//! ```
+
 #[cfg(test)]
 #[macro_use]
 extern crate quickcheck;
@@ -73,6 +92,12 @@ fn __jhash_mix(oa: &mut u32, ob: &mut u32, oc: &mut u32) {
     *oc = c;
 }
 
+/// Hashes an arbitrary sequence of bytes.
+///
+/// `initval` is a previous hash or an arbitrary value
+///
+///
+/// Returns the hash value of the key. The result depends on endianness.
 pub fn jhash(key: &[u8], initval: u32) -> u32 {
     let length = key.len();
 
